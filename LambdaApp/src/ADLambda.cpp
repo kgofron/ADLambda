@@ -108,6 +108,8 @@ ADLambda::ADLambda(const char *portName, const char *configPath, int maxBuffers,
             asynParamInt32, &LAMBDA_BadFrameCounter);
     status |= ADDriver::createParam(LAMBDA_BadImageString,
             asynParamInt32, &LAMBDA_BadImage);
+    status |= ADDriver::createParam(LAMBDA_DualThresholdPairsString,
+            asynParamInt32, &LAMBDA_DualThresholdPairs);
     status |= connect(pasynUserSelf);
 
     status |= initializeDetector();
@@ -170,6 +172,14 @@ asynStatus ADLambda::acquireStop(){
     int status = asynSuccess;
 
     lambdaInstance->StopImaging();
+
+    epicsThreadSleep(0.02);
+/*
+    while(lambdaInstance->GetState() != ON){
+	printf("In here\n");
+	epicsThreadSleep(0.002);
+    }
+*/
 
     setIntegerParam(ADStatus, ADStatusIdle);
     setIntegerParam(ADAcquire, 0);
@@ -318,6 +328,7 @@ void ADLambda::handleNewImageTask() {
     int arrayCounter;
     int arrayCallbacks;
     int numBadFrames;
+    bool firstDualThresholdImage = true;
     NDArrayInfo arrayInfo;
     epicsTimeStamp currentTime;
 
@@ -338,7 +349,7 @@ void ADLambda::handleNewImageTask() {
         if (numBufferedImages > 0 ) {
             setIntegerParam(LAMBDA_DecodedQueueDepth, (int)numBufferedImages);
             callParamCallbacks();
-            asynPrint(pasynUserSelf, ASYN_TRACE_FLOW,
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
                     "%s:%s numberBufferedImages: %d\n",
                     driverName, __FUNCTION__,
                     (int) numBufferedImages);
@@ -735,10 +746,20 @@ void ADLambda::handleNewImageTask() {
                     totalLossFramesRead = lossFrames;
                 }
                 latestImageNumberRead = currentFrameNo;
-                acquiredImages++;
+                int operatingMode;
+                getIntegerParam(LAMBDA_OperatingMode, &operatingMode);
+                if((operatingMode == 2 && firstDualThresholdImage) || operatingMode != 2){
+                    printf("Saw first dual threshold image\n");
+                    acquiredImages++;
+                    firstDualThresholdImage = false;
+                }
+                else firstDualThresholdImage = true;
             }
         }
         else {
+
+//            if(operatingMode == 2){
+//            }
             if (acquiringData == true && acquiredImages >= frameNumbersRead){
                 acquiringData = false;
                 acquiredImages=0;

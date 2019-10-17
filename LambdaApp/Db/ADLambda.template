@@ -38,6 +38,22 @@ record(longin, "$(P)$(R)BadFrameCounter")
    field(SCAN, "I/O Intr")
 }
 
+
+record(ao, "$(P)$(R)DualThresholdPairs")
+{
+   field(PINI, "YES")
+   field(DTYP, "asynInt32")
+   field(INP, "@asyn($(PORT),$(ADDR),$(TIMEOUT))LAMBDA_DUAL_PAIRS")
+   field(SCAN, "I/O Intr")
+}
+
+record(ai, "$(P)$(R)DualThresholdPairs_RBV")
+{
+   field(DTYP, "asynInt32")
+   field(INP, "@asyn($(PORT),$(ADDR),$(TIMEOUT))LAMBDA_DUAL_PAIRS")
+   field(SCAN, "I/O Intr")
+}
+
 record(mbbo, "$(P)$(R)ImageMode")
 {
    field(TWST, "")

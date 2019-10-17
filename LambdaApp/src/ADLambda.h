@@ -67,7 +67,8 @@ protected:
     int LAMBDA_DetectorState;
     int LAMBDA_BadFrameCounter;
     int LAMBDA_BadImage;
-#define LAMBDA_LAST_PARAM LAMBDA_BadImage
+    int LAMBDA_DualThresholdPairs;
+#define LAMBDA_LAST_PARAM LAMBDA_DualThresholdPairs
 
 private:
     bool imageThreadKeepAlive;
@@ -99,7 +100,7 @@ private:
 #define LAMBDA_DetectorStateString          "LAMBDA_DETECTOR_STATE"
 #define LAMBDA_BadFrameCounterString       "LAMBDA_BAD_FRAME_COUNTER"
 #define LAMBDA_BadImageString               "LAMBDA_BAD_IMAGE"
-
+#define LAMBDA_DualThresholdPairsString        "LAMBDA_DUAL_PAIRS"
 
 #define NUM_LAMBDA_PARAMS ((int)(&LAMBDA_LAST_PARAM - &LAMBDA_FIRST_PARAM + 1))
 
