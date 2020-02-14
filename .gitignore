@@ -23,3 +23,5 @@ external/
 *.txt
 !SystemConfig.txt
 !CMakeLists.txt
+liblambda/
+libfsdetcore/
